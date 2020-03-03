@@ -1,2 +1,25 @@
-# Control_Theory_project
-Project of control theory which inlcude realization listed points:
+
+# Control Theory project
+
+### Project requirements
+-------------------------------------
+1. Choose of application
+2. State Machine implementation
+3. State Machine visualization
+4. Graph analysis
+5. Process visualization
+
+### Application description
+---------------------------------------
+
+### State Machine implementation
+--------------------------------------------------
+
+### State Machine visualization
+---------------------------------------------
+
+### Graph analysis
+---------------------------
+
+### Process visualization
+------------------------------------
