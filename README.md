@@ -23,3 +23,9 @@
 
 ### Process visualization
 ------------------------------------
+
+### List of contributors
+----------------------------------------
+1. Michał Barełkowski
+2. Mateusz Piechocki
+3. Bartosz Ptak
