@@ -13,7 +13,7 @@
 ----------------------------
 1. Create an environment
 ```console
-conda create --name ts python=3.7.4 --file requirements.txt
+conda env create -f environment.yml
 ```
 2. Activate an environment 
 ```console
@@ -35,11 +35,6 @@ State Machine source [FSG 2020 rules](https://www.formulastudent.de/fileadmin/us
 --------------------------------
 To implement Autonomous System State Machine was used StateMachine package. It let to create State Machine, States and Transitions between them. ([PyPI](https://pypi.org/project/python-statemachine/), [Docs](https://python-3-patterns-idioms-test.readthedocs.io/en/latest/StateMachine.html))
 
-#### StateMachine install
-```console
-conda activate ts
-pip install python-statemachine==0.8.0
-```
 #### Autonomous System State Machine run
 ```python
 from AutonomousSystem import AutonomousSystem as AS

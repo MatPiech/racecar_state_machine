@@ -1,0 +1,7 @@
+name: ts
+dependencies:
+- python==3.7.4
+- pip
+- pip:
+  - numpy==1.18.1
+  - python-statemachine==0.8.0
