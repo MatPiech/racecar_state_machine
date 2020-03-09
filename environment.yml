@@ -5,3 +5,4 @@ dependencies:
 - pip:
   - numpy==1.18.1
   - python-statemachine==0.8.0
+  - networkx==2.4
