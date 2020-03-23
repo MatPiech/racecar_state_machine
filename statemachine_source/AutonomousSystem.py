@@ -103,7 +103,7 @@ class AutonomousSystem(StateMachine):
     finished = as_driving.to(as_finished)
     emergency2 = as_driving.to(as_emergency)
     
-    emergency2 = as_finished.to(as_emergency)
+    emergency3 = as_finished.to(as_emergency)
     off3 = as_finished.to(as_off)
     
     off4 = as_emergency.to(as_off)
