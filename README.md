@@ -67,6 +67,7 @@ SM.current_state
 
 ### Process visualization
 -------------------------
+A racing car simulation is in [another repository](https://github.com/bartoszptak/racecar_simulator).
 
 ### List of contributors
 ------------------------
