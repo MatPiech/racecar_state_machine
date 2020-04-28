@@ -37,11 +37,16 @@ else:
   import tty, termios
 import time
 
+from AutonomousSystem import AutonomousSystem
+
 MAX_LIN_VEL = 1
 MAX_ANG_VEL = 1
 
 LIN_VEL_STEP_SIZE = 0.1
 ANG_VEL_STEP_SIZE = 0.1
+
+SM = AutonomousSystem()
+TACTIC = [0]
 
 def getKey():
     if os.name == 'nt':
@@ -128,6 +133,10 @@ def steerage(values, key):
 
     return target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
 
+def statep():
+    system('clear')
+    print("Racecar simulator console! "+'\033[93m'+"State: "+ str(SM.current_state.name) +'\033[0m')
+
 def manual_mode():
     target_linear_vel   = 0.0
     target_angular_vel  = 0.0
@@ -137,8 +146,7 @@ def manual_mode():
     t = target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
     
     while(1):
-        system('clear')
-        print("Racecar simulator console! "+'\033[93m'+"State: manual"+'\033[0m')
+        statep()
         print("Sterowanie w,a,s,d; space by zatrzymac; q by wyjsc")
         print(vels(t[0], t[1]))
 
@@ -147,13 +155,14 @@ def manual_mode():
         if key in 'wsad ':
             t = steerage(t, key)
         elif key == 'q':
+            SM.off1()
             break
 
 
     if os.name != 'nt':
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
-def autonomous_mode_2(tactic):
+def autonomous_mode_2():
     target_linear_vel   = 0.0
     target_angular_vel  = 0.0
     control_linear_vel  = 0.0
@@ -161,87 +170,125 @@ def autonomous_mode_2(tactic):
 
     t = target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
 
-    if tactic==1:
+    if TACTIC[0]==1:
         timeout = time.time() + 10
-    elif tactic==2:
+    elif TACTIC[0]==2:
         timeout = time.time() + 5
         timeout2 = time.time() + 15
 
     while True:
-        system('clear')
-        print("Racecar simulator console! "+'\033[93m'+"State: AS Driving"+'\033[0m')
+        statep()
         print('\033[94m'+'I am doing a mission!'+'\033[0m')
         print("0. Emegrancy mode")
 
         key = getKey()
         if key == "0":
-            emegrancy()
+            SM.emergency2()
             break
         else:
-            if tactic == 1:
+            if TACTIC[0] == 1:
                 if time.time() > timeout:
-                    finish()
+                    SM.finished()
                     break
-            elif tactic == 2:
+            elif TACTIC[0] == 2:
                 if time.time() < timeout:
                     t = steerage(t, 'w')
                 elif time.time() < timeout2:
                     pass
                 else:
                     t = steerage(t, ' ')
-                    finish()
+                    SM.finished()
                     break
                 
 
 def emegrancy():
-    system('clear')
-    print("Racecar simulator console! "+'\033[93m'+"State: AS Emegrancy"+'\033[0m')
+    statep()    
     print('\033[91m'+'All systems switched off, vehicle stopped!'+'\033[0m')
     steerage((0,0,0,0), ' ')
 
     time.sleep(5)
 
+    SM.off4()
+
 def finish():
-    system('clear')
-    print("Racecar simulator console! "+'\033[93m'+"State: AS Finished"+'\033[0m')
-    print('\033[94m'+'The mission has been completed!'+'\033[0m')
-    print('\033[94m'+'Vehicle stopped!'+'\033[0m')
-    time.sleep(5)
+    timeout = time.time() + 5
+    while True:
+        statep()
+        print("0. Emegrancy mode")
+        print('\033[94m'+'The mission has been completed!'+'\033[0m')
+        print('\033[94m'+'Vehicle stopped!'+'\033[0m')
+
+        key = getKey()
+        if key == "0":
+            SM.emergency3()
+            break
+        else:
+            if timeout<time.time():
+                SM.off3()
+                break
+
+    
+    
 
 def autonomous_mode():
     while True:
-        system('clear')
-        print("Racecar simulator console! "+'\033[93m'+"State: AS Ready"+'\033[0m')
-        print("1. Dummy")
-        print("2. Tactic: go straight")
+        statep()
+        print("1. Back")
+        print("2. Dummy")
+        print("3. Tactic: go straight")        
         print("0. Emegrancy mode")
 
         key = getKey()
         if key == "1":
-            autonomous_mode_2(tactic=1)
+            SM.off2()
             break
         elif key == "2":
-            autonomous_mode_2(tactic=2)
+            TACTIC[0] = 1
+            SM.driving()
+            break
+        elif key == "3":
+            TACTIC[0] = 2
+            SM.driving()
             break
         elif key == "0":
-            emegrancy()
+            SM.emergency1()
             break
+
+def off():
+    statep()
+    print("1. Manual mode")
+    print("2. Autonomous mode")
+    print("0. Exit")
+    TACTIC[0] = 0
+
+    key = getKey()
+    if key == "1":
+        SM.manual()
+    elif key == "2":
+        SM.ready()
+    elif key == "0":
+        exit(0)
+
+def main():
+    while True:
+        if SM.current_state.value == 'as_off':
+            off()
+        elif SM.current_state.value == 'manual_driving':
+            manual_mode()
+        elif SM.current_state.value == 'as_ready':
+            autonomous_mode()
+        elif SM.current_state.value == 'as_driving':
+            autonomous_mode_2()
+        elif SM.current_state.value == 'as_emergency':
+            emegrancy()
+        elif SM.current_state.value == 'as_finished':
+            finish()
+
+
 
 if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
+    main()
 
-    while True:
-        system('clear')
-        print("Racecar simulator console! "+'\033[93m'+"State: AS Off"+'\033[0m')
-        print("1. Manual mode")
-        print("2. Autonomous mode")
-        print("0. Exit")
-
-        key = getKey()
-        if key == "1":
-            manual_mode()
-        elif key == "2":
-            autonomous_mode()
-        elif key == "0":
-            break
+        
         
