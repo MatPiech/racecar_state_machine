@@ -1,5 +1,6 @@
-# racecar_simulator
-A lightweight simulator of the MIT Racecar, modified by PUT Motorsport.
+### A lightweight simulator of the [MIT Racecar](https://github.com/mit-racecar/racecar_simulator), modified by PUT Motorsport.
+
+![top](./README_files/top.png)
 
 ## TODO
 - [ ] zintegrować maszynę stanu z tym jakoś
