@@ -1,0 +1,247 @@
+#!/usr/bin/env python
+
+# Copyright (c) 2011, Willow Garage, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#    * Neither the name of the Willow Garage, Inc. nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#       this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+from os import system
+import rospy
+from sensor_msgs.msg import Joy
+import sys, select, os
+if os.name == 'nt':
+  import msvcrt
+else:
+  import tty, termios
+import time
+
+MAX_LIN_VEL = 1
+MAX_ANG_VEL = 1
+
+LIN_VEL_STEP_SIZE = 0.1
+ANG_VEL_STEP_SIZE = 0.1
+
+def getKey():
+    if os.name == 'nt':
+      return msvcrt.getch()
+
+    tty.setraw(sys.stdin.fileno())
+    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+    if rlist:
+        key = sys.stdin.read(1)
+    else:
+        key = ''
+
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    return key
+
+def vels(target_linear_vel, target_angular_vel):
+    return "currently:\tlinear vel %s\t angular vel %s " % (target_linear_vel,target_angular_vel)
+
+def makeSimpleProfile(output, input, slop):
+    if input > output:
+        output = min( input, output + slop )
+    elif input < output:
+        output = max( input, output - slop )
+    else:
+        output = input
+
+    return output
+
+def constrain(input, low, high):
+    if input < low:
+      input = low
+    elif input > high:
+      input = high
+    else:
+      input = input
+
+    return input
+
+def checkLinearLimitVelocity(vel):
+    vel = constrain(vel, -MAX_LIN_VEL, MAX_LIN_VEL)
+
+    return vel
+
+def checkAngularLimitVelocity(vel):
+    vel = constrain(vel, -MAX_ANG_VEL, MAX_ANG_VEL)
+
+    return vel
+
+rospy.init_node('racecar_teleop')
+pub = rospy.Publisher('joy', Joy, queue_size=10)
+
+def make_messge(control_linear_vel, control_angular_vel):
+    joy = Joy()
+    joy.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    joy.axes = [0.0, control_linear_vel, control_angular_vel, 0.0, 0.0, 0.0]
+
+    pub.publish(joy)
+
+def steerage(values, key):
+    target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel = values
+
+    if key == 'w':
+        target_linear_vel = checkLinearLimitVelocity(target_linear_vel + LIN_VEL_STEP_SIZE)
+    elif key == 's':
+        target_linear_vel = checkLinearLimitVelocity(target_linear_vel - LIN_VEL_STEP_SIZE)
+    elif key == 'a':
+        target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
+    elif key == 'd':
+        target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
+    elif key == ' ':
+        target_linear_vel   = 0.0
+        control_linear_vel  = 0.0
+        target_angular_vel  = 0.0
+        control_angular_vel = 0.0
+
+    control_angular_vel = round(control_angular_vel, 2)
+    target_angular_vel = round(target_angular_vel, 2)
+
+    control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
+    control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
+
+    make_messge(control_linear_vel, control_angular_vel)
+
+    return target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
+
+def manual_mode():
+    target_linear_vel   = 0.0
+    target_angular_vel  = 0.0
+    control_linear_vel  = 0.0
+    control_angular_vel = 0.0
+
+    t = target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
+    
+    while(1):
+        system('clear')
+        print("Racecar simulator console! "+'\033[93m'+"State: manual"+'\033[0m')
+        print("Sterowanie w,a,s,d; space by zatrzymac; q by wyjsc")
+        print(vels(t[0], t[1]))
+
+        key = getKey()
+        
+        if key in 'wsad ':
+            t = steerage(t, key)
+        elif key == 'q':
+            break
+
+
+    if os.name != 'nt':
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+
+def autonomous_mode_2(tactic):
+    target_linear_vel   = 0.0
+    target_angular_vel  = 0.0
+    control_linear_vel  = 0.0
+    control_angular_vel = 0.0
+
+    t = target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel
+
+    if tactic==1:
+        timeout = time.time() + 10
+    elif tactic==2:
+        timeout = time.time() + 5
+        timeout2 = time.time() + 15
+
+    while True:
+        system('clear')
+        print("Racecar simulator console! "+'\033[93m'+"State: AS Driving"+'\033[0m')
+        print('\033[94m'+'I am doing a mission!'+'\033[0m')
+        print("0. Emegrancy mode")
+
+        key = getKey()
+        if key == "0":
+            emegrancy()
+            break
+        else:
+            if tactic == 1:
+                if time.time() > timeout:
+                    finish()
+                    break
+            elif tactic == 2:
+                if time.time() < timeout:
+                    t = steerage(t, 'w')
+                elif time.time() < timeout2:
+                    pass
+                else:
+                    t = steerage(t, ' ')
+                    finish()
+                    break
+                
+
+def emegrancy():
+    system('clear')
+    print("Racecar simulator console! "+'\033[93m'+"State: AS Emegrancy"+'\033[0m')
+    print('\033[91m'+'All systems switched off, vehicle stopped!'+'\033[0m')
+    steerage((0,0,0,0), ' ')
+
+    time.sleep(5)
+
+def finish():
+    system('clear')
+    print("Racecar simulator console! "+'\033[93m'+"State: AS Finished"+'\033[0m')
+    print('\033[94m'+'The mission has been completed!'+'\033[0m')
+    print('\033[94m'+'Vehicle stopped!'+'\033[0m')
+    time.sleep(5)
+
+def autonomous_mode():
+    while True:
+        system('clear')
+        print("Racecar simulator console! "+'\033[93m'+"State: AS Ready"+'\033[0m')
+        print("1. Dummy")
+        print("2. Tactic: go straight")
+        print("0. Emegrancy mode")
+
+        key = getKey()
+        if key == "1":
+            autonomous_mode_2(tactic=1)
+            break
+        elif key == "2":
+            autonomous_mode_2(tactic=2)
+            break
+        elif key == "0":
+            emegrancy()
+            break
+
+if __name__=="__main__":
+    settings = termios.tcgetattr(sys.stdin)
+
+    while True:
+        system('clear')
+        print("Racecar simulator console! "+'\033[93m'+"State: AS Off"+'\033[0m')
+        print("1. Manual mode")
+        print("2. Autonomous mode")
+        print("0. Exit")
+
+        key = getKey()
+        if key == "1":
+            manual_mode()
+        elif key == "2":
+            autonomous_mode()
+        elif key == "0":
+            break
+        
