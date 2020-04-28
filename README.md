@@ -17,8 +17,9 @@ A lightweight simulator of the MIT Racecar, modified by PUT Motorsport.
 mkdir -p ~/sim_ws/src
 cd ~/sim_ws/src
 git clone https://github.com/MatPiech/Control_Theory_project.git
+cd Control_Theory_project/
 git checkout sim
-cd ..
+cd ../../
 catkin_make
 ```
 
