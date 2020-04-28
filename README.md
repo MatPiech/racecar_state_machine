@@ -3,7 +3,10 @@
 ![top](./README_files/top.png)
 
 ## TODO
-- [ ] zintegrować maszynę stanu z tym jakoś
+- [X] przerobić sterowanie by współpracowało z joystickiem
+- [X] przerobić mapę i config do naszych celów
+- [X] dodać pilota do sterowania
+- [X] zintegrować maszynę stanu z tym jakoś
 - [ ] wykrywanie kolizji
 - [ ] jakiś prosty system autonomiczny, który będzie sobie jeździł do jakiegoś punktu
 - [ ] chyba wsio
