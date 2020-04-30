@@ -1,12 +1,11 @@
-
 # Control Theory project
-
-### Project requirements
+Repository contain project of Autonomous System State Machine with simulator in ROS for Control Theory project lecture.
+### Project tasks
 ------------------------
-1. Choose of application
-2. State Machine implementation
-3. State Machine visualization
-4. Graph analysis
+1. ~~Choose of application~~
+2. ~~State Machine implementation~~
+3. ~~State Machine visualization~~
+4. ~~Graph analysis~~
 5. Process visualization
 
 ### Environment requirements
@@ -22,7 +21,7 @@ conda activate ts
 
 ### Application description
 ---------------------------
-Selected application describe Autonomous System for Formula Student Driverless Class.
+Selected application describes Autonomous System for Formula Student Driverless Class race car.
 
 ![Autonomous System State Machine](img/AS_state_machine.jpg)
 
@@ -48,7 +47,15 @@ SM.current_state
 [s.identifier for s in SM.states]
 # ['as_driving', 'as_emergency', 'as_finished', 'as_off', 'as_ready', 'manual_driving']
 [s.identifier for s in SM.transitions]
-# ['driving', 'emergency1', 'emergency2', 'finished', 'manual', 'off1', 'off2', 'off3', 'off4', 'ready']
+# ['driving_emergency', 'driving_finished', 'emergency_off', 'finished_emergency', 'finished_off', 'manual_off', 'off_manual', 'off_ready', 'ready_driving', 'ready_emergency', 'ready_off']
+```
+To check mapped states one can use:
+```python
+SM.states_map
+```
+While to check mapped transition one can use:
+```python
+SM.transitions_map
 ```
 #### Change state (transit to next another state)
 ```python
@@ -58,12 +65,31 @@ SM.ready()
 SM.current_state
 # ASReady('AS Ready', identifier='as_ready', value='as_ready', initial=False)
 ```
+To change state with use of `transitions_map` dictionary one can use:
+```python
+SM.transitions_map[<transition>]._run(SM)
+```
+Where `<transition>` is an identifier of transition.
 
 ### State Machine visualization
 -------------------------------
+To visualize implemented graph networkx package was used. It is library for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. ([PyPI](https://pypi.org/project/networkx/),[Docs](https://networkx.github.io/documentation/stable/))
 
+To visualize created state machine one can use:
+```console
+python graph_visualization/creator.py
+```
+In the result one can get graph as below.
+
+![Autonomous System State Machine networkx graph](graph_visualization/graph.png)
 ### Graph analysis
 ------------------
+To check correctness of created state machine and if it doesn't contain any deadlocks or livelocks unittest framework was used. It checks if  state machine has implemented right quantity of states and transitions for every state. Moreover it verifies if current state changes in a correct way after transition according to one of available paths. ([Docs](https://docs.python.org/3/library/unittest.html))
+
+To run tests one can used command as below:
+```console
+python statemachine_source/test_AutonomousSystem.py
+```
 
 ### Process visualization
 -------------------------
@@ -71,7 +97,7 @@ A racing car simulation is in [sim branch](https://github.com/MatPiech/Control_T
 
 ### List of contributors
 ------------------------
-1. Michał Barełkowski
-2. Mateusz Piechocki
-3. Bartosz Ptak
+1. [Michał Barełkowski](https://github.com/embe97)
+2. [Mateusz Piechocki](https://github.com/MatPiech)
+3. [Bartosz Ptak](https://github.com/bartoszptak)
 

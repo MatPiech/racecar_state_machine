@@ -115,17 +115,17 @@ class AutonomousSystem(StateMachine):
     # initialize AutonomousSystem object with StateMachine __init__ method
     def __init__(self):
         super(AutonomousSystem, self).__init__()
-        self.transitions_identifiers = {}
-        self.set_transitions_identifiers()
+        self.transitions_map = {}
+        self.set_transitions_map()
 
     # define a printable autonomous system state machine representation
     def __repr__(self):
         return "{}(model={!r}, state_field={!r}, current_state={!r})".format(
             type(self).__name__, self.model, self.state_field, self.current_state.identifier)
 
-    def set_transitions_identifiers(self):
+    def set_transitions_map(self):
         for trans in self.transitions:
-            self.transitions_identifiers[trans.identifier] = trans
+            self.transitions_map[trans.identifier] = trans
 
     def get_state_parameters(self):
         self.current_state.get_state_parameters()
@@ -152,7 +152,7 @@ if __name__ == '__main__':
         for transition in path:
             print(f'Current state before tranistion: {SM.current_state}')
             print(f'Transition: {transition}')
-            SM.transitions_identifiers[transition]._run(SM)
+            SM.transitions_map[transition]._run(SM)
             print(f'Current state after tranistion: {SM.current_state}\n')
             SM.get_state_parameters()
 
