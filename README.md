@@ -77,18 +77,20 @@ To visualize implemented graph networkx package was used. It is library for the 
 
 To visualize created state machine one can use:
 ```console
-python graph_visualization/creator.py
+cd autonomous_system/visualize/
+python graph_creator.py
 ```
 In the result one can get graph as below.
 
-![Autonomous System State Machine networkx graph](graph_visualization/graph.png)
+![Autonomous System State Machine networkx graph](img/graph.png)
 ### Graph analysis
 ------------------
 To check correctness of created state machine and if it doesn't contain any deadlocks or livelocks unittest framework was used. It checks if  state machine has implemented right quantity of states and transitions for every state. Moreover it verifies if current state changes in a correct way after transition according to one of available paths. ([Docs](https://docs.python.org/3/library/unittest.html))
 
 To run tests one can used command as below:
 ```console
-python statemachine_source/test_AutonomousSystem.py
+cd autonomous_system/test/
+python test_autonomous_system.py
 ```
 
 ### Process visualization
@@ -100,4 +102,5 @@ A racing car simulation is in [sim branch](https://github.com/MatPiech/Control_T
 1. [Michał Barełkowski](https://github.com/embe97)
 2. [Mateusz Piechocki](https://github.com/MatPiech)
 3. [Bartosz Ptak](https://github.com/bartoszptak)
+
 

@@ -1,5 +1,7 @@
 import unittest
-from AutonomousSystem import AutonomousSystem as AS
+import sys
+sys.path.append('../')
+from autonomous_system import AutonomousSystem as AS
 
 
 class TestAutonomousSystem(unittest.TestCase):
