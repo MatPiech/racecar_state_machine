@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="racecar_simulator" name="state_graph" type="state_graph.py" output="screen"></node>
+</launch>

@@ -52,6 +52,7 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
     nav_msgs
     sensor_msgs
     geometry_msgs
+    cv_bridge
     )
 
   # Include catkin_libraries

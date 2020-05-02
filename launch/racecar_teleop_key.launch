@@ -1,5 +1,3 @@
 <launch> 
-    <!-- turtlebot3_teleop_key already has its own built in velocity smoother -->
-    <node pkg="racecar_simulator" type="racecar_teleop_key" name="racecar_teleop_keyboard"  output="screen">
-    </node>
+    <node pkg="racecar_simulator" type="racecar_teleop_key.py" name="racecar_teleop_keyboard"  output="screen"></node>
   </launch>

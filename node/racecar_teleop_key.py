@@ -29,6 +29,7 @@
 
 from os import system
 import rospy
+from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 import sys, select, os
 if os.name == 'nt':
@@ -37,7 +38,9 @@ else:
   import tty, termios
 import time
 
-from AutonomousSystem import AutonomousSystem
+from autonomous_system import AutonomousSystem
+
+SM = AutonomousSystem()
 
 MAX_LIN_VEL = 1
 MAX_ANG_VEL = 1
@@ -45,7 +48,6 @@ MAX_ANG_VEL = 1
 LIN_VEL_STEP_SIZE = 0.1
 ANG_VEL_STEP_SIZE = 0.1
 
-SM = AutonomousSystem()
 TACTIC = [0]
 
 def getKey():
@@ -95,16 +97,13 @@ def checkAngularLimitVelocity(vel):
 
     return vel
 
-rospy.init_node('racecar_teleop')
-pub = rospy.Publisher('joy', Joy, queue_size=10)
-
 def make_messge(control_linear_vel, control_angular_vel):
     joy = Joy()
     joy.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     joy.axes = [0.0, control_linear_vel, control_angular_vel, 0.0, 0.0, 0.0]
 
-    pub.publish(joy)
+    joy_pub.publish(joy)
 
 def steerage(values, key):
     target_linear_vel, target_angular_vel, control_linear_vel, control_angular_vel = values
@@ -136,6 +135,13 @@ def steerage(values, key):
 def statep():
     system('clear')
     print("Racecar simulator console! "+'\033[93m'+"State: "+ str(SM.current_state.name) +'\033[0m')
+    SM.get_state_parameters()
+
+    state_msg = String()
+
+    state_msg.data = SM.current_state.name
+
+    state_pub.publish(state_msg)
 
 def manual_mode():
     target_linear_vel   = 0.0
@@ -155,14 +161,14 @@ def manual_mode():
         if key in 'wsad ':
             t = steerage(t, key)
         elif key == 'q':
-            SM.off1()
+            SM.manual_off()
             break
 
 
     if os.name != 'nt':
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
-def autonomous_mode_2():
+def driving_mode():
     target_linear_vel   = 0.0
     target_angular_vel  = 0.0
     control_linear_vel  = 0.0
@@ -183,12 +189,12 @@ def autonomous_mode_2():
 
         key = getKey()
         if key == "0":
-            SM.emergency2()
+            SM.driving_emergency()
             break
         else:
             if TACTIC[0] == 1:
                 if time.time() > timeout:
-                    SM.finished()
+                    SM.driving_finished()
                     break
             elif TACTIC[0] == 2:
                 if time.time() < timeout:
@@ -197,20 +203,19 @@ def autonomous_mode_2():
                     pass
                 else:
                     t = steerage(t, ' ')
-                    SM.finished()
+                    SM.driving_finished()
                     break
                 
-
-def emegrancy():
+def emegrancy_mode():
     statep()    
     print('\033[91m'+'All systems switched off, vehicle stopped!'+'\033[0m')
     steerage((0,0,0,0), ' ')
 
     time.sleep(5)
 
-    SM.off4()
+    SM.emergency_off()
 
-def finish():
+def finished_mode():
     timeout = time.time() + 5
     while True:
         statep()
@@ -220,17 +225,14 @@ def finish():
 
         key = getKey()
         if key == "0":
-            SM.emergency3()
+            SM.finished_emergency()
             break
         else:
             if timeout<time.time():
-                SM.off3()
+                SM.finished_off()
                 break
-
-    
-    
-
-def autonomous_mode():
+ 
+def ready_mode():
     while True:
         statep()
         print("1. Back")
@@ -240,21 +242,21 @@ def autonomous_mode():
 
         key = getKey()
         if key == "1":
-            SM.off2()
+            SM.ready_off()
             break
         elif key == "2":
             TACTIC[0] = 1
-            SM.driving()
+            SM.ready_driving()
             break
         elif key == "3":
             TACTIC[0] = 2
-            SM.driving()
+            SM.ready_driving()
             break
         elif key == "0":
-            SM.emergency1()
+            SM.ready_emergency()
             break
 
-def off():
+def off_mode():
     statep()
     print("1. Manual mode")
     print("2. Autonomous mode")
@@ -263,30 +265,34 @@ def off():
 
     key = getKey()
     if key == "1":
-        SM.manual()
+        SM.off_manual()
     elif key == "2":
-        SM.ready()
+        SM.off_ready()
     elif key == "0":
         exit(0)
 
 def main():
     while True:
         if SM.current_state.value == 'as_off':
-            off()
+            off_mode()
         elif SM.current_state.value == 'manual_driving':
             manual_mode()
         elif SM.current_state.value == 'as_ready':
-            autonomous_mode()
+            ready_mode()
         elif SM.current_state.value == 'as_driving':
-            autonomous_mode_2()
+            driving_mode()
         elif SM.current_state.value == 'as_emergency':
-            emegrancy()
+            emegrancy_mode()
         elif SM.current_state.value == 'as_finished':
-            finish()
+            finished_mode()
 
 
 
 if __name__=="__main__":
+    rospy.init_node('racecar_teleop')
+    joy_pub = rospy.Publisher('joy', Joy, queue_size=10)
+    state_pub = rospy.Publisher('state', String, queue_size=10)
+
     settings = termios.tcgetattr(sys.stdin)
     main()
 
