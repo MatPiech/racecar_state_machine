@@ -6,7 +6,10 @@
   <arg name="map" default="$(find racecar_simulator)/maps/stata_basement.yaml"/>
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map)"/>
 
-  <!-- Launch rvis -->
+  <!-- Launch state graph visualizator -->
+  <node pkg="racecar_simulator" name="state_graph" type="state_graph.py" output="screen"></node>
+
+  <!-- Launch rviz -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find racecar_simulator)/rviz/myconfig.rviz" />
 
   <!-- Launch the racecar model -->

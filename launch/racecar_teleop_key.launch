@@ -1,3 +1,4 @@
 <launch> 
     <node pkg="racecar_simulator" type="racecar_teleop_key.py" name="racecar_teleop_keyboard"  output="screen"></node>
+    <node pkg="racecar_simulator" type="collision_detector.py" name="collision_detector"  output="screen"></node>
   </launch>

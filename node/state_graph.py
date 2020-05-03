@@ -47,6 +47,17 @@ class Graph:
             destination = transition.destinations[0].name
             self.G.add_edge(source, destination)
 
+    def fig_to_array(self, fig):
+        # draw the renderer
+        fig.canvas.draw()
+
+        # Get the RGB buffer from the figure
+        w, h = fig.canvas.get_width_height()
+        buf = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        buf.shape = (w, h, 3)
+
+        return buf
+
     def color_graph(self):
         color_map = []
         for node in self.G:
@@ -65,17 +76,6 @@ class Graph:
         img_msg = bridge.cv2_to_imgmsg(img, 'bgr8')            
 
         self.state_graph_pub.publish(img_msg)
-
-    def fig_to_array(self, fig):
-        # draw the renderer
-        fig.canvas.draw()
-
-        # Get the RGB buffer from the figure
-        w, h = fig.canvas.get_width_height()
-        buf = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        buf.shape = (w, h, 3)
-
-        return buf
 
 
 if __name__ == '__main__':

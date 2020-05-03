@@ -35,6 +35,18 @@ Toolbars:
 Visualization Manager:
   Class: ""
   Displays:
+    - Class: rviz/Image
+      Enabled: true
+      Topic: /state_graph/image_raw
+      Image Topic: /state_graph
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
     - Alpha: 0.699999988079071
       Class: rviz/Map
       Color Scheme: map
