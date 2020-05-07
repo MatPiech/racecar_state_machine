@@ -50,6 +50,7 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
     tf2_geometry_msgs
     ackermann_msgs
     nav_msgs
+    std_msgs
     sensor_msgs
     geometry_msgs
     cv_bridge
@@ -82,7 +83,7 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
   )
 
   catkin_install_python(PROGRAMS
-    node/racecar_teleop_key
+    node/racecar_teleop_key.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 
