@@ -65,7 +65,7 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
   include_directories(include ${catkin_INCLUDE_DIRS})
 
   # Add the nodes
-  file(GLOB NODE_SRC_FILES node/*.cpp)
+  file(GLOB NODE_SRC_FILES src/node/*.cpp)
   foreach(_node_file ${NODE_SRC_FILES})
       get_filename_component(_node_name ${_node_file} NAME_WE)
       add_executable(${_node_name} ${_node_file})
@@ -83,7 +83,7 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
   )
 
   catkin_install_python(PROGRAMS
-    node/racecar_teleop_key.py
+    #scripts/racecar_teleop_key.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 
