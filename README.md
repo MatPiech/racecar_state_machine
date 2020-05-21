@@ -1,11 +1,11 @@
 # Control Theory project
 Repository contain project of Autonomous System State Machine with simulator in ROS for Control Theory project lecture.
-### Project tasks
+### Project steps
 ------------------------
-1. ~~Choose of application~~
-2. ~~State Machine implementation~~
-3. ~~State Machine visualization~~
-4. ~~Graph analysis~~
+1. Choose of application
+2. State Machine implementation
+3. State Machine graph visualization
+4. State Machine graph analysis
 5. Process visualization
 
 ### Environment requirements
@@ -23,7 +23,7 @@ conda activate ts
 ---------------------------
 Selected application describes Autonomous System for Formula Student Driverless Class race car.
 
-![Autonomous System State Machine](img/AS_state_machine.jpg)
+![Autonomous System State Machine](README_files/AS_state_machine.jpg)
 
 Not included on graph description:
 - ASMS - Autonomous System Master Switch
@@ -71,7 +71,7 @@ SM.transitions_map[<transition>]._run(SM)
 ```
 Where `<transition>` is an identifier of transition.
 
-### State Machine visualization
+### State Machine graph visualization
 -------------------------------
 To visualize implemented graph networkx package was used. It is library for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. ([PyPI](https://pypi.org/project/networkx/),[Docs](https://networkx.github.io/documentation/stable/))
 
@@ -82,8 +82,8 @@ python graph_creator.py
 ```
 In the result one can get graph as below.
 
-![Autonomous System State Machine networkx graph](img/graph.png)
-### Graph analysis
+![Autonomous System State Machine networkx graph](REAFME_files/graph.png)
+### State Machine graph analysis
 ------------------
 To check correctness of created state machine and if it doesn't contain any deadlocks or livelocks unittest framework was used. It checks if  state machine has implemented right quantity of states and transitions for every state. Moreover it verifies if current state changes in a correct way after transition according to one of available paths. ([Docs](https://docs.python.org/3/library/unittest.html))
 
@@ -102,5 +102,4 @@ A racing car simulation is in [sim branch](https://github.com/MatPiech/Control_T
 1. [Michał Barełkowski](https://github.com/embe97)
 2. [Mateusz Piechocki](https://github.com/MatPiech)
 3. [Bartosz Ptak](https://github.com/bartoszptak)
-
 
