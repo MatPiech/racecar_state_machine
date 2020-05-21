@@ -1,38 +1,41 @@
-### A lightweight simulator of the [MIT Racecar](https://github.com/mit-racecar/racecar_simulator), modified by PUT Motorsport.
+# Racecar Autonomous System State Machine Simulator
+A lightweight ROS Melodic simulator based on [MIT racecar](https://github.com/mit-racecar/racecar_simulator).
 
-![top](./README_files/top.png)
-
-## TODO
-- [X] przerobić sterowanie by współpracowało z joystickiem
-- [X] przerobić mapę i config do naszych celów
-- [X] dodać pilota do sterowania
-- [X] zintegrować maszynę stanu z tym jakoś
-- [ ] wykrywanie kolizji
-- [ ] jakiś prosty system autonomiczny, który będzie sobie jeździł do jakiegoś punktu
-- [ ] chyba wsio
+![top](./README_files/simulation.png)
 
 # Dependency
 * ros-melodic
-* python2/3
+* python2
+```bash
+pip2 install -r config/requirements.txt
+```
 
 # Usage
 * installation
 ```bash
-mkdir -p ~/sim_ws/src
-cd ~/sim_ws/src
-git clone https://github.com/MatPiech/Control_Theory_project.git
-cd Control_Theory_project/
+mkdir -p ~/racecar_state_machine_ws/src
+cd ~/racecar_state_machine_ws/src
+git clone https://github.com/MatPiech/racecar_state_machine.git
+cd racecar_state_machine/
 git checkout sim
 cd ../../
 catkin_make
+source devel/setup.bash
 ```
 
-* run simulate
+* run simulator
 ```bash
 roslaunch racecar_simulator simulate.launch
 ```
+![Rviz simulator window](./README_files/rviz_simulator.png)
 
 * run console controler
 ```bash
 roslaunch racecar_simulator racecar_teleop_key.launch
 ```
+![console controler](./README_files/console_controller.png)
+
+## TODO
+- Update documentation
+- Add simple autonomous system (point to point driving)
+- Update console controller

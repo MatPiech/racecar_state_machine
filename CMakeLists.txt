@@ -38,8 +38,6 @@ install(DIRECTORY include/${PROJECT_NAME}
 # ROS >
 ######################################
 
-catkin_python_setup()
-
 # Only run this code in the catkin environment
 if(DEFINED CATKIN_DEVEL_PREFIX)
   find_package(catkin REQUIRED COMPONENTS
@@ -83,7 +81,6 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
   )
 
   catkin_install_python(PROGRAMS
-    #scripts/racecar_teleop_key.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 

@@ -41,6 +41,9 @@ scan_topic: "/scan"
 pose_topic: "/pose"
 odom_topic: "/odom"
 pose_rviz_topic: "/initialpose"
+collision_topic: "/collision"
+state_topic: "/state"
+state_graph_topic: "/state_graph"
 
 # The names of the transformation frames published to
 map_frame: "map"
