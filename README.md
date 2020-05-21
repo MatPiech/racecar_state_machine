@@ -1,5 +1,6 @@
-# Control Theory project
-Repository contain project of Autonomous System State Machine with simulator in ROS for Control Theory project lecture.
+# Racecar Autonomous System State Machine
+Project of Autonomous System State Machine for Formula Student Driverless Vehicle with simulation in ROS using changed [MIT racecar simulator](https://github.com/mit-racecar/racecar_simulator) for Control Theory project lecture.
+
 ### Project steps
 ------------------------
 1. Choose of application
