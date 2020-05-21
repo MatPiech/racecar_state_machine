@@ -6,9 +6,7 @@ A lightweight ROS Melodic simulator based on [MIT racecar](https://github.com/mi
 # Dependency
 * ros-melodic
 * python2
-```bash
-pip2 install -r config/requirements.txt
-```
+* python's packages in config/requirements.txt
 
 # Usage
 * installation
@@ -18,6 +16,7 @@ cd ~/racecar_state_machine_ws/src
 git clone https://github.com/MatPiech/racecar_state_machine.git
 cd racecar_state_machine/
 git checkout sim
+pip2 install -r config/requirements.txt
 cd ../../
 catkin_make
 source devel/setup.bash
