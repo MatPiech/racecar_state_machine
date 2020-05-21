@@ -83,7 +83,7 @@ python graph_creator.py
 ```
 In the result one can get graph as below.
 
-![Autonomous System State Machine networkx graph](REAFME_files/graph.png)
+![Autonomous System State Machine networkx graph](README_files/graph.png)
 ### State Machine graph analysis
 ------------------
 To check correctness of created state machine and if it doesn't contain any deadlocks or livelocks unittest framework was used. It checks if  state machine has implemented right quantity of states and transitions for every state. Moreover it verifies if current state changes in a correct way after transition according to one of available paths. ([Docs](https://docs.python.org/3/library/unittest.html))
